@@ -1,0 +1,18 @@
+name:               Elias-omega-coding
+version:            0.0.0.0
+synopsis:           A292046 - The list of distinct values of A072464.
+description:        A sequence of distinct values of lengths of omega encodings and others sequences deriving from this.
+homepage:           https://github.com/khalilfazal/Elias-omega-coding#readme
+author:             Khalil Fazal
+maintainer:         khalil.fazal@uoit.net
+category:           Web
+build-type:         Simple
+cabal-version:      >= 1.10
+extra-source-files: README.md
+
+executable Elias-omega-coding
+  hs-source-dirs:   src
+  main-is:          Main.hs
+  default-language: Haskell2010
+  build-depends:    base >= 4.7 && < 5,
+                    containers
