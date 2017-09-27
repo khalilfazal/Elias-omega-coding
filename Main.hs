@@ -1,7 +1,7 @@
 module Main where
 
 import Data.Foldable        (foldl')
-import Data.Sequence        ((<|), (|>), Seq, ViewL ((:<)), empty, fromList, index, length, partition, singleton, spanl, viewl, zipWith)
+import Data.Sequence hiding (null)
 import Prelude       hiding (length, zipWith)
 
 ilog2 :: Integral int => int -> Int
