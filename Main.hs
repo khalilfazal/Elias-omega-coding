@@ -34,7 +34,7 @@ ds :: Integral int => int -> Seq Int
 ds = fmap length . group . cs
 
 main :: IO ()
-main = (print . ds) 100000
+main = (print . ds) (10^5)
 
 {- $ time runghc Main.hs
  - fromList [1,2,3,1,4,1,1,1,2,1,1,1,1,1,1,1,5]
