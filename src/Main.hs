@@ -1,45 +1,45 @@
 module Main where
 
-import Data.Foldable        (foldl')
-import Data.Sequence hiding (null)
-import Prelude       hiding (length, zipWith)
+import Data.List (genericLength, group, mapAccumL, partition)
+import Data.Map  ((!), Map, insert, singleton)
 
-ilog2 :: Integral int => int -> Int
+type Sequence int = int -> [int]
+
+ilog2 :: Integral int => int -> int
 ilog2 = truncate . logBase 2 . fromIntegral
 
-nats :: Integral int => int -> Seq int
-nats = fromList . enumFromTo 1
+nats :: (Num a, Enum a) => a -> [a]
+nats = enumFromTo 1
 
-groupBy :: (a -> a -> Bool) -> Seq a -> Seq (Seq a)
-groupBy eq xs'
-    | null xs'  = empty
-    | otherwise = (x <| ys) <| groupBy eq zs
-        where
-            (x :< xs) = viewl xs'
-            (ys, zs)  = spanl (eq x) xs
+a :: Integral int => int -> Map int int -> int -> (Map int int, int)
+a limit memo i = (memo', a')
+    where
+        a' = 1 + i + (memo ! ilog2 i)
 
-group :: Eq a => Seq a -> Seq (Seq a)
-group = groupBy (==)
+        memo' | i <= limit = insert i a' memo
+              | otherwise = memo
 
-as :: Integral int => int -> Seq int
-as n = foldl' (\a i -> a |> (i + a `index` ilog2 i + 1)) (singleton 1) [1 .. n]
+as :: Integral int => Sequence int
+as n = ((1:) . snd . mapAccumL (a lg) (singleton 0 1) . nats) n
+    where
+        lg = ilog2 n
 
-bs :: Integral int => int -> Seq int
+bs :: Integral int => Sequence int
 bs n = (snd . partition (`elem` as n) . nats) n
 
-cs :: Integral int => int -> Seq int
+cs :: Integral int => Sequence int
 cs n = (zipWith subtract (nats n) . bs) n
 
-ds :: Integral int => int -> Seq Int
-ds = fmap length . group . cs
+ds :: Integral int => Sequence int
+ds = map genericLength . group . cs
 
 main :: IO ()
-main = (print . ds) (10^5)
+main = (print . ds) (10^6)
 
-{- $ time runghc Main.hs
- - fromList [1,2,3,1,4,1,1,1,2,1,1,1,1,1,1,1,5]
+{- $ time stack exec Elias-omega-coding
+ - fromList [1,2,3,1,4,1,1,1,2,1,1,1,1,1,1,1,5,1,1,1]
  -
- - real	5m42.221s
- - user	5m42.448s
- - sys	0m0.200s
+ - real	106m50.100s
+ - user	106m49.756s
+ - sys	0m0.162s
  -}
